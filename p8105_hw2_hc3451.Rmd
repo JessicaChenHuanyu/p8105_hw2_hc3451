@@ -1,0 +1,55 @@
+---
+title: "p8105_hw2_hc3451"
+author: "Huanyu Chen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup}
+library(tidyverse)
+```
+
+# Problem 1
+```{r}
+pols_month <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/pols-month.csv")
+snp <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/snp.csv")
+unemployment <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/unemployment.csv")
+
+# First Step of Data Cleaning: pols_month
+pols_month <- pols_month |>
+  separate(mon, into = c("year", "month", "day"), sep = "-") |>
+  mutate(month = month.name[as.numeric(month)]) |>
+  mutate(president = ifelse("prez_dem" == 1, "dem", "gop")) |>
+  select(-prez_dem, -prez_gop, -day)
+head(pols_month)
+```
+
+```{r}
+# Second Step of Data Cleaning: snp
+snp <- snp |>
+  separate(date, into = c("month", "day", "year"), sep = "/") |>
+  mutate(month = month.name[as.numeric(month)]) |>
+  mutate(year = ifelse(as.numeric(year) <= 20, paste0("20", year), paste0("19", year))) |>
+  select(year, month, everything())
+head(snp)
+```
+
+```{r}
+# Third Step of Data Cleaning: unemployment
+unemployment = pivot_longer(unemployment, Jan:Dec, names_to = "month", values_to = "unemployment")
+unemployment <- unemployment |>
+  mutate(month = month.name[factor(month)]) |>
+  mutate(year = tolower(Year)) |>
+  select(-Year) |>
+  select(year, month, unemployment)
+head(unemployment)
+```
+
+```{r}
+# Join the datasets
+merged_data_1 <- merge(pols_month, snp, by = c("year", "month"), all.x = TRUE)
+merged_data <- merge(merged_data_1, unemployment, by = c("year", "month"), all.x = TRUE)
+head(merged_data)
+```
+
+The final merged dataset involves three datasets: "pols" containing political data, "snp" with stock market information, and "unemployment" providing economic indicators. It comprises 822 observations and 12 variables, spanning from year 1947 to 2015. Key variables include `year`, `month`, and `unemployment_rate`, alongside some political and stock market indicators.
