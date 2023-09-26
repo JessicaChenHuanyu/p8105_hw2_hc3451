@@ -1,0 +1,24 @@
+---
+title: "p8105_hw2_hc3451"
+author: "Huanyu Chen"
+date: "`r Sys.Date()`"
+output: git_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+```{r}
+pols_month <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/pols-month.csv")
+snp <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/snp.csv")
+unemployment <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/unemployment.csv")
+
+# First Step of Data Cleaning
+pols_month <- pols_month |>
+  separate(mon, into = c("year", "month", "day"), sep = "-") |>
+  mutate(month = month.name[as.numeric(month)]) |>
+  mutate(president = ifelse("prez_dem" == 1, "dem", "gop")) |>
+  select(-prez_dem, -prez_gop, -day)
+```
+
