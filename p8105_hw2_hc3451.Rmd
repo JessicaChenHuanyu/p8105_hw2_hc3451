@@ -58,16 +58,64 @@ The final merged dataset involves three datasets: "pols" containing political da
 
 # Problem 2
 ```{r}
+# mrTrash
 mrTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549")
 
 mrTrash <- janitor::clean_names(mrTrash)
 mrTrash <- separate(mrTrash, date, into = c("year", "month_1", "day"), sep = "-")
 
 mrTrash <- mrTrash |>
-  select(-month_1) |>
   select(dumpster, year, month, everything()) |>
   mutate(homes_powered = round(weight_tons * 500 / 30))
 
 head(mrTrash)
+```
+
+```{r}
+# profTrash
+profTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M96")
+
+profTrash <- janitor::clean_names(profTrash)
+profTrash <- separate(profTrash, date, into = c("year", "month", "day"), sep = "-")
+
+profTrash <- profTrash |>
+  select(dumpster, year, month, everything()) |>
+  mutate(homes_powered = round(weight_tons * 500 / 30))
+
+head(profTrash)
+```
+
+```{r}
+# gwyTrash
+gwyTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", range = "A2:K108")
+
+gwyTrash <- janitor::clean_names(gwyTrash)
+gwyTrash <- separate(gwyTrash, date, into = c("year", "month", "day"), sep = "-")
+
+gwyTrash <- gwyTrash |>
+  select(dumpster, year, month, everything()) |>
+  mutate(homes_powered = round(weight_tons * 500 / 30))
+
+head(gwyTrash)
+```
+
+```{r}
+# Combine
+mrTrash <- mrTrash |>
+  mutate(source = "Mr Trash") |>
+  mutate(year = as.character(year))
+
+profTrash <- profTrash |>
+  mutate(source = "Professor Trash") |>
+  mutate(year = as.character(year))
+
+gwyTrash <- gwyTrash |>
+  mutate(source = "Gwynnda Trash") |>
+  mutate(year = as.character(year))
+
+combined_trash <- bind_rows(mrTrash, profTrash, gwyTrash)
+combined_trash <- combined_dataset_trash |>
+  dplyr:::select(dumpster, year, month, day, source, everything()) |>
+  arrange(year, match(month, month.name), day)
 ```
 
