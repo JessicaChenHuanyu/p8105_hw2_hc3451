@@ -148,10 +148,25 @@ The average baseline age is `r base_mean`. Moreover, `r sprintf("%.2f%%", 100*pr
 amyloid <- read.csv('/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/mci_amyloid.csv', skip = 1)
 amyloid <- janitor::clean_names(amyloid)
 amyloid <- amyloid |>
-  rename(ratio_2_year = time_2,
+  rename(id = study_id,
+         ratio_2_year = time_2,
          ratio_4_year = time_4,
          ratio_6_year = time_6,
          ratio_8_year = time_8)
 ```
 
 Important steps in the import process and relevant features of the dataset include deleting the first row, cleaning variable names to a tidy format, and renaming variables to their respective real categories.
+
+```{r}
+base_participants <- base_filtered$participant_id
+amyloid_participants <- amyloid$participant_id
+
+only_in_base <- setdiff(base_filtered$id, amyloid$id)
+only_in_amyloid <- setdiff(amyloid$id, base_filtered$id)
+
+combined_dataset <- inner_join(base_filtered, amyloid, by = "id")
+write.csv(combined_dataset, "combined_dataset.csv", row.names = FALSE)
+```
+
+# Conclusion
+Some participants (with id: `r only_in_base`) appear in only the baseline; while some participants appear in only the amyloid datasets. `combined_dataset` (has `r nrow(combined_dataset)` observations) combined participants who appear in both datasets.
