@@ -23,7 +23,6 @@ pols_month <- pols_month |>
   mutate(month = month.name[as.numeric(month)]) |>
   mutate(president = ifelse("prez_dem" == 1, "dem", "gop")) |>
   select(-prez_dem, -prez_gop, -day)
-head(pols_month)
 ```
 
 ```{r}
@@ -33,7 +32,6 @@ snp <- snp |>
   mutate(month = month.name[as.numeric(month)]) |>
   mutate(year = ifelse(as.numeric(year) <= 20, paste0("20", year), paste0("19", year))) |>
   select(year, month, everything())
-head(snp)
 ```
 
 ```{r}
@@ -44,14 +42,12 @@ unemployment <- unemployment |>
   mutate(year = tolower(Year)) |>
   select(-Year) |>
   select(year, month, unemployment)
-head(unemployment)
 ```
 
 ```{r}
 # Join the datasets
 merged_data_1 <- merge(pols_month, snp, by = c("year", "month"), all.x = TRUE)
 merged_data <- merge(merged_data_1, unemployment, by = c("year", "month"), all.x = TRUE)
-head(merged_data)
 ```
 
 # Conclusion
@@ -68,8 +64,6 @@ mrTrash <- separate(mrTrash, date, into = c("year", "month", "day"), sep = "-")
 mrTrash <- mrTrash |>
   select(dumpster, year, month, everything()) |>
   mutate(homes_powered = round(weight_tons * 500 / 30))
-
-head(mrTrash)
 ```
 
 ```{r}
@@ -82,8 +76,6 @@ profTrash <- separate(profTrash, date, into = c("year", "month", "day"), sep = "
 profTrash <- profTrash |>
   select(dumpster, year, month, everything()) |>
   mutate(homes_powered = round(weight_tons * 500 / 30))
-
-head(profTrash)
 ```
 
 ```{r}
@@ -96,8 +88,6 @@ gwyTrash <- separate(gwyTrash, date, into = c("year", "month", "day"), sep = "-"
 gwyTrash <- gwyTrash |>
   select(dumpster, year, month, everything()) |>
   mutate(homes_powered = round(weight_tons * 500 / 30))
-
-head(gwyTrash)
 ```
 
 ```{r}
@@ -130,3 +120,38 @@ total_cigarette_butts_july_2021 <- sum(pull(filtered_data, cigarette_butts))
 # Conclusion
 This combined dataset has `r nrow(combined_trash)` observations. The variable `source` represents the origin of the data and `homes_powered` represents the number of homes powered based on electricity from trash. The total weight of trash collected by Professor Trash Wheel is `r sum(pull(profTrash, weight_tons))` and the total number of cigarette butts collected by Gwynnda in July of 2021 is `r total_cigarette_butts_july_2021`.
 
+# Problem 3
+```{r}
+base <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/MCI_baseline.csv", skip = 1)
+base <- janitor::clean_names(base)
+base <- base |>
+  mutate(sex = if_else(sex == 0, 'female', 'male')) |>
+  mutate(apoe4 = if_else(apoe4 == 0, 'non-carrier', 'carrier'))
+
+base_filtered <- base |>
+  filter(age_at_onset != ".")
+```
+
+Important steps in the import process and relevant features of the dataset include deleting the first row, cleaning variable names to a tidy format, and mutating the 'sex' and 'apoe4' variables from numeric values to their respective real categories. `r nrow(base)` participants were recruited, and of these `r nrow(base_filtered)` develop MCI.
+
+```{r}
+base_mean = mean(pull(base_filtered, current_age))
+
+data_female <- base_filtered |>
+  filter(sex == "female")
+proportion <- sum(data_female$apoe4 == "carrier") / nrow(data_female)
+```
+
+The average baseline age is `r base_mean`. Moreover, `r sprintf("%.2f%%", 100*proportion)` of women in the study are APOE4 carriers.
+
+```{r}
+amyloid <- read.csv('/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/mci_amyloid.csv', skip = 1)
+amyloid <- janitor::clean_names(amyloid)
+amyloid <- amyloid |>
+  rename(ratio_2_year = time_2,
+         ratio_4_year = time_4,
+         ratio_6_year = time_6,
+         ratio_8_year = time_8)
+```
+
+Important steps in the import process and relevant features of the dataset include deleting the first row, cleaning variable names to a tidy format, and renaming variables to their respective real categories.
