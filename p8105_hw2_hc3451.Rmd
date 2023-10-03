@@ -13,9 +13,9 @@ library(dplyr)
 
 # Problem 1
 ```{r}
-pols_month <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/pols-month.csv")
-snp <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/snp.csv")
-unemployment <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/unemployment.csv")
+pols_month <- read.csv("./pols-month.csv")
+snp <- read.csv("./snp.csv")
+unemployment <- read.csv("./unemployment.csv")
 
 # First Step of Data Cleaning: pols_month
 pols_month <- pols_month |>
@@ -56,7 +56,7 @@ The final merged dataset involves three datasets: "pols" containing political da
 # Problem 2
 ```{r}
 # mrTrash
-mrTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549")
+mrTrash <- read_excel("./202309 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N586")
 
 mrTrash <- janitor::clean_names(mrTrash)
 mrTrash <- separate(mrTrash, date, into = c("year", "month", "day"), sep = "-")
@@ -68,7 +68,7 @@ mrTrash <- mrTrash |>
 
 ```{r}
 # profTrash
-profTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M96")
+profTrash <- read_excel("./202309 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M108")
 
 profTrash <- janitor::clean_names(profTrash)
 profTrash <- separate(profTrash, date, into = c("year", "month", "day"), sep = "-")
@@ -80,7 +80,7 @@ profTrash <- profTrash |>
 
 ```{r}
 # gwyTrash
-gwyTrash <- read_excel("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/202207 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", range = "A2:K108")
+gwyTrash <- read_excel("./202309 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", range = "A2:L157")
 
 gwyTrash <- janitor::clean_names(gwyTrash)
 gwyTrash <- separate(gwyTrash, date, into = c("year", "month", "day"), sep = "-")
@@ -122,7 +122,7 @@ This combined dataset has `r nrow(combined_trash)` observations. The variable `s
 
 # Problem 3
 ```{r}
-base <- read.csv("/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/MCI_baseline.csv", skip = 1)
+base <- read.csv("./MCI_baseline.csv", skip = 1)
 base <- janitor::clean_names(base)
 base <- base |>
   mutate(sex = if_else(sex == 0, 'female', 'male')) |>
@@ -145,7 +145,7 @@ proportion <- sum(data_female$apoe4 == "carrier") / nrow(data_female)
 The average baseline age is `r base_mean`. Moreover, `r sprintf("%.2f%%", 100*proportion)` of women in the study are APOE4 carriers.
 
 ```{r}
-amyloid <- read.csv('/Users/huanyu/Documents/CUIMC/Data Science/p8105_hw2_hc3451/mci_amyloid.csv', skip = 1)
+amyloid <- read.csv('./mci_amyloid.csv', skip = 1)
 amyloid <- janitor::clean_names(amyloid)
 amyloid <- amyloid |>
   rename(id = study_id,
